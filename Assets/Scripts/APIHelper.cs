@@ -1,16 +1,23 @@
 using UnityEngine;
 using System.IO;
 using System.Net;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
 
-public static class APIHelper
+public class APIHelper : MonoBehaviour
 {
-    public static Usuario GetUsuario()
+    [ContextMenu("Test Get")]
+    public async void GetUsuario()
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://localhost:44356/api/getusuario");
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        string json = reader.ReadToEnd();
+        UnityWebRequest request = UnityWebRequest.Get("https://localhost:7023/API/v1/GetUsuarios");
 
-        return JsonUtility.FromJson<Usuario>(json);
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        var operation = request.SendWebRequest();
+
+        while (!operation.isDone) await Task.Yield();
+
+        if (request.result == UnityWebRequest.Result.Success) Debug.Log(request.downloadHandler.text);
+        else Debug.Log(request.error);
     }
 }

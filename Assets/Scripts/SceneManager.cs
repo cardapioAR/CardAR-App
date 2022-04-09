@@ -9,7 +9,6 @@ public class SceneManager : MonoBehaviour
 
     public void GetAPI()
     {
-        Usuario usuario = APIHelper.GetUsuario();
-        apiText.text = usuario.user;
+        
     }
 }
