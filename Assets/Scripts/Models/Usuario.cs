@@ -4,11 +4,8 @@ using System;
 
 public class Usuario
 {
-    public string id;
-    public string user;
-    public string password;
-    public string email;
-    public string dataDeNascimento;
-    public string dataDeCriacao;
-    public string termos;
+    public int usuarioId { get; set; }
+    public string username { get; set; }
+    public string email { get; set; }
+    public string password { get; set; }
 }

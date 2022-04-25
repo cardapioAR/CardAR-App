@@ -1,23 +1,50 @@
-using UnityEngine;
-using System.IO;
-using System.Net;
-using UnityEngine.Networking;
+using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class APIHelper : MonoBehaviour
 {
-    [ContextMenu("Test Get")]
+    public TextMeshProUGUI apiText;
+    public GameObject inputAPI;
+
+    string baseUrl = "https://localhost:7023/API/v1/";
+
+    // [ContextMenu("Test Get")]
     public async void GetUsuario()
     {
-        UnityWebRequest request = UnityWebRequest.Get("https://localhost:7023/API/v1/GetUsuarios");
+        try
+        {
+            string url = baseUrl + "GetUsuario/" + inputAPI.GetComponent<TMP_InputField>().text;
 
-        request.SetRequestHeader("Content-Type", "application/json");
+            UnityWebRequest request = UnityWebRequest.Get(url);
 
-        var operation = request.SendWebRequest();
+            request.SetRequestHeader("Content-Type", "application/json");
 
-        while (!operation.isDone) await Task.Yield();
+            var operation = request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.Success) Debug.Log(request.downloadHandler.text);
-        else Debug.Log(request.error);
+            while (!operation.isDone) await Task.Yield();
+
+            var jsonResponse = request.downloadHandler.text;
+
+            if (request.result != UnityWebRequest.Result.Success) Debug.LogError("Erro de Conexao");
+
+            var jsonResponseFixed = jsonResponse.Replace("[", "").Replace("]", "");
+
+            var result = JsonConvert.DeserializeObject<Usuario>(jsonResponseFixed);
+
+            apiText.text = $"ID: {result.usuarioId}\n" +
+                $"Usuário: {result.username}\n" +
+                $"E-mail: {result.email}\n" +
+                $"Senha: {result.password}";
+        }
+        catch (Exception ex)
+        {
+            apiText.text = $"Erro!\nUsuario não existe.";
+            Debug.Log(ex);
+            throw;
+        }
     }
 }

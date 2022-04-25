@@ -7,7 +7,7 @@ public class SceneManager : MonoBehaviour
 {
     public TextMeshProUGUI apiText;
 
-    public void GetAPI()
+    public void Get()
     {
         
     }
